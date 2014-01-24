@@ -40,30 +40,32 @@
 	arg pitch = 60, sus = false, dyn = 0.5, dbmin = -30, dbmax = 0, out = 0, length = 1,
 	server = s, bundleDelay = 0.25, detuneCents = 0, decay = 0.01, cutoffmin = 400,
 	cutoffmax = 5000;
-	var dynIdx = (dyn * 3).ceil.asInt;
-	var	dynAmp = dyn.linlin(0, 1, dbmin, dbmax);
-	var dynCutoff = dyn.linlin(0,1,cutoffmin,cutoffmax);
-	var	pIdx = ~ygp_pkeys.indexIn(pitch);
-	var cpch = ~ygp_pkeys[pIdx]; // The pitch that's in the dictionary.
-	var diff = pitch - cpch;  	 // The difference therefrom
-	// The rate as a result of the difference
-	var rate = 2 ** ((diff.asFloat + (detuneCents/100)) / 12.0);
-	var buf;
-	if ( ~ygp_dict[cpch].includesKey(sus).not, { sus = sus.not });
-	if (~ygp_dict[cpch][sus].includesKey(dynIdx),
-		{ buf = ~ygp_dict[cpch][sus][dynIdx] },
-		{ buf = ~ygp_dict[cpch][sus][~ygp_dict[cpch][sus].keys.asArray.sort.first] });
-	if ( buf.notNil,
-		{
-			var bufLen = ((buf.numFrames / server.sampleRate) / buf.numChannels) / rate;
-			if ((bufLen < length),{length = bufLen});
-			server.makeBundle(bundleDelay,{ Synth(\pblelpf,
-				[\bufnum, buf,
-					\rate, rate,
-					\gain, dynAmp,
-					\out, out,
-					\length, length,
-					\decay,decay,
-					\cutoff,dynCutoff])}) },
-		{ "couldn't play".post; dynIdx.post; buf.postln });
+	server.makeBundle(bundleDelay,{
+		var dynIdx = (dyn * 3).ceil.asInt;
+		var	dynAmp = dyn.linlin(0, 1, dbmin, dbmax);
+		var dynCutoff = dyn.linlin(0,1,cutoffmin,cutoffmax);
+		var	pIdx = ~ygp_pkeys.indexIn(pitch);
+		var cpch = ~ygp_pkeys[pIdx]; // The pitch that's in the dictionary.
+		var diff = pitch - cpch;  	 // The difference therefrom
+		// The rate as a result of the difference
+		var rate = 2 ** ((diff.asFloat + (detuneCents/100)) / 12.0);
+		var buf;
+		if ( ~ygp_dict[cpch].includesKey(sus).not, { sus = sus.not });
+		if (~ygp_dict[cpch][sus].includesKey(dynIdx),
+			{ buf = ~ygp_dict[cpch][sus][dynIdx] },
+			{ buf = ~ygp_dict[cpch][sus][~ygp_dict[cpch][sus].keys.asArray.sort.first] });
+		if ( buf.notNil,
+			{
+				var bufLen = ((buf.numFrames / server.sampleRate) / buf.numChannels) / rate;
+				if ((bufLen < length),{length = bufLen});
+				Synth(\pblelpf,
+					[\bufnum, buf,
+						\rate, rate,
+						\gain, dynAmp,
+						\out, out,
+						\length, length,
+						\decay,decay,
+						\cutoff,dynCutoff]) },
+			{ "couldn't play".post; dynIdx.post; buf.postln });
+	});
 };
