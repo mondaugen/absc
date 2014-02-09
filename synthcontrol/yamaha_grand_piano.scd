@@ -39,7 +39,7 @@
 ~ppno_rt = {
 	arg pitch = 60, sus = false, dyn = 0.5, dbmin = -30, dbmax = 0, out = 0, length = 1,
 	server = s, bundleDelay = 0.25, detuneCents = 0, decay = 0.01, cutoffmin = 400,
-	cutoffmax = 5000;
+	cutoffmax = 5000, addAction = \addToHead;
 	server.makeBundle(bundleDelay,{
 		var dynIdx = (dyn * 3).ceil.asInt;
 		var	dynAmp = dyn.linlin(0, 1, dbmin, dbmax);
@@ -65,7 +65,7 @@
 						\out, out,
 						\length, length,
 						\decay,decay,
-						\cutoff,dynCutoff]) },
+						\cutoff,dynCutoff],addAction: addAction) },
 			{ "couldn't play".post; dynIdx.post; buf.postln });
 	});
 };
