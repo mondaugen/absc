@@ -24,10 +24,8 @@ ASeq1 {
  				this.form.do({ |key|
  					key.postln;
  					this.eventDict[key].do({ |event|
- 						if(event.notNil,{
-							this.playFunc.valueWithEnvir(event);
- 						});
- 						event.delta.yield;
+						this.playFunc.valueWithEnvir(event);
+						event.delta.yield;
  					});
  				});
  			}
