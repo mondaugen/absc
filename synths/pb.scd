@@ -1,7 +1,7 @@
 // Synths for playing buffers
 
 SynthDef(\pble, {
-	arg out = #[0,1], bufnum, rate = 1.0, gain = -3, length = 1, attack = 0, decay = 0.1;
+	arg out = 0, bufnum, rate = 1.0, gain = -3, length = 1, attack = 0, decay = 0.1;
 	Out.ar(out,
 		EnvGen.kr(
 			Env.new(
@@ -12,7 +12,7 @@ SynthDef(\pble, {
 }).store;
 
 SynthDef(\pblelpf, {
-	arg out = #[0,1], bufnum, rate = 1.0, gain = -3, length = 1, attack = 0, decay = 0.1,
+	arg out = 0, bufnum, rate = 1.0, gain = -3, length = 1, attack = 0, decay = 0.1,
 	cutoff = 1000;
 	Out.ar(out,
 		LPF.ar(EnvGen.kr(

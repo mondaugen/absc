@@ -37,5 +37,10 @@ ASeq1 {
 		tempoClock.sched(delta,this.routine);
 	}
 
+	schedRoutineAbs { arg tempoClock, time = 0;
+		this.initRoutine;
+		tempoClock.schedAbs(time,this.routine);
+	}
+
 	stopRoutine { this.routine.stop; }
 }	
