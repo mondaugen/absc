@@ -21,6 +21,8 @@ DelaySequencer {
 		this.recordLength = maxRecordLength;
 		this.recordPeriod = 1;
 		this.tempoClock = tempoClock;
+		this.attack = 0;
+		this.decay = 0;
 
 		SynthDef("temp_rec",{ |buf, lenSecs|
 			var input =  SoundIn.ar(0) * EnvGen.kr(Env.new([0,1,1,0],[0,lenSecs,0]),doneAction:2);
@@ -38,22 +40,23 @@ DelaySequencer {
 
 	// Given delay and play length, determine the total time until the event will be over
 	getTotalEventLength{ |delay,playLength|
-		delay + playLength;
+		^((delay / this.tempoClock.tempo) + playLength);
 	}
 
 	getNextFreeBufIndex {
-		var index = 0, returnVal = nil;
-		while({this.bufferFreedom[index].not},{ index = index + 1; });
-		if(index < this.buffers.size,{returnVal = index});
-		returnVal;
+		^this.bufferFreedom.indexOf(true);
 	}
 
 	play {
 		var bufIndex = this.getNextFreeBufIndex;
-		var buf = this.buffers[bufIndex];
+		var buf = nil;
 		var bufLengthSecs;
 		var maxPlayLength = 0;
-		this.bufferFreedom[bufIndex] = false;
+		"BufIndex: ".post; bufIndex.postln;
+		if(bufIndex.notNil,{
+			buf = this.buffers[bufIndex];
+			this.bufferFreedom[bufIndex] = false;
+		});
 		if(buf.notNil,{
 			var recSynth = Synth(\temp_rec,[\buf,buf,
 				\lenSecs,this.recordLength],this.target,this.addAction);
