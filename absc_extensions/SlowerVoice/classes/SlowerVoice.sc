@@ -1,6 +1,9 @@
 SlowerVoice {
 	var <>buffers, <>in, <>out, <>recordingSynths, <>playingSynths, <>masterVolume, <>group, <>busyBufs, <>server, <>rampTime, <>noteOnFunc, <>noteOffFunc;
 
+	/// TODO: Note freeing doesn't work properly if you want to play a note that is still fading out
+	/// (not yet freed)
+
 	*new {
 		// polyphony is maximum number of voices
 		// in is where it records from
